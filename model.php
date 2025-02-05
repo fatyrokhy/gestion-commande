@@ -151,7 +151,7 @@ function ajoutCommande($article, $prix, $quantite) {
         }
         if ($cmd["article"]!=$article) {
             $_SESSION['commandes'][] = [
-                "id" => uniqid(),
+                // "id" => uniqid(),
                 "article" => $article,
                 "prix" => $prix,
                 "quantite" => $quantite
@@ -180,7 +180,7 @@ function totalAmount() {
 function delete($id){
     if (!empty($_SESSION['commandes'])) {
         foreach ($_SESSION['commandes'] as $index => $cmd ) {
-            if ($cmd['id'] == $id) {
+            if ($index == $id) {
                 unset($_SESSION['commandes'][$index]);
                 return;
             }

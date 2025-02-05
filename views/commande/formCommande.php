@@ -1,5 +1,5 @@
 <?php require_once("./views/composants/navbar.html.php");
- ?>
+?>
 <div class="grid grid-cols-1 gap-8 text-gray-700 bg-white rounded-md w-[70%] p-2  mx-auto mt-12">
     <div class="shadow w-[50%] border border-gray-400 rounded-md  gap-8 p-2 place-self-start">
         <form action="" method="get" class="w-full ">
@@ -8,24 +8,26 @@
             <input type="hidden" name="page" value="formCommande">
             <button type="submit" name="searchbtn1" class="rounded-md bg-blue-400 p-1 text-white">OK</button>
         </form>
-        <?php if (isset($_GET["searchbtn1"])):
-        if($recherche !=null):?> 
-        <form action="" method="post">
-        <div class="flex justify-between gap-32 mt-2">
-                <div class="flex flex-nowrap gap-4">
-                    <label for="ref">Nom:</label>
-                    <input type="text" value="<?=$recherche[0]['nom']?>" name="nom"  class="rounded-md border-2 border-gray-400 w-[50%] h-8" readonly>
-                    <span></span>
-                </div>
-                <div class="flex flex-nowrap gap-4">
-                    <label for="ref">Préom:</label>
-                    <input type="text" value="<?=$recherche[0]['prenom']?>" name="prenom"  class="rounded-md border-2 border-gray-400 w-[50%] h-8" readonly>
-                    <span></span>
-                </div>
-            </div>
+        <?php if (isset($_GET["searchbtn1"])): ?>
+            <?php if (isset($_SESSION['client'])): ?>
+                <form action="" method="post">
+                    <div class="flex justify-between gap-32 mt-2">
+                        <div class="flex flex-nowrap gap-4">
+                            <label for="ref">Nom:</label>
+                            <input type="text" value="<?= $_SESSION['client'][0]['nom'] ?>" name="nom" class="rounded-md border-2 border-gray-400 w-[50%] h-8" readonly>
+                            <span></span>
+                        </div>
+                        <div class="flex flex-nowrap gap-4">
+                            <label for="ref">Préom:</label>
+                            <input type="text" value="<?= $_SESSION['client'][0]['prenom'] ?>" name="prenom" class="rounded-md border-2 border-gray-400 w-[50%] h-8" readonly>
+                            <span></span>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <p>Aucun client trouvé avec ce numero</p>
+                <?php endif ?>
             <?php endif ?>
-            <?php endif ?>
-        </form>
+                </form>
 
     </div>
     <div class="place-self-end w-[50%] flex justify-between">
@@ -57,7 +59,7 @@
                 <div class="flex fle x-wrap gap-4">
                     <label for="ref">Article:</label>
                     <input type="text" value="" name="article" class="rounded-md border-2 border-gray-400 w-[50%] h-8">
-                    <div></div>
+                    <div class="text-red-400"><?= $errors["article"] ?? "" ?></div>
                 </div>
                 <div class="flex flex-wrap gap-4">
                     <label for="ref">Prix:</label>
@@ -84,23 +86,28 @@
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($_SESSION['commandes'] as $index => $commande): ?>
-                    <tr class="text-center">
-                        <td><?= htmlspecialchars($commande['article']) ?></td>
-                        <td><?= htmlspecialchars($commande['prix']) ?></td>
-                        <td><?= htmlspecialchars($commande['quantite']) ?></td>
-                        <td><?= htmlspecialchars($commande['quantite'])*htmlspecialchars($commande['prix']) ?></td>
-                        <td class="text-center">
-                    <a href="?action=edit&index=<?= $index ?>" class="text-blue-500"><i class="ri-edit-circle-line"></i></a>
-                </td>
-                    </tr>
-                <?php endforeach; ?>
+                    <?php if (count($_SESSION['commandes']) > 0): ?>
+                        <?php foreach ($_SESSION['commandes'] as $index => $commande): ?>
+                            <tr class="text-center border-b-2 border-slate-200 p-2">
+                                <td><?= htmlspecialchars($commande['article']) ?></td>
+                                <td><?= htmlspecialchars($commande['prix']) ?></td>
+                                <td><?= htmlspecialchars($commande['quantite']) ?></td>
+                                <td><?= htmlspecialchars($commande['quantite']) * htmlspecialchars($commande['prix']) ?></td>
+                                <td class="   gap-4">
+                                    <a href="?controller=controllerCommande&page=formCommande&edit=<?= $index ?>" class="text-blue-500"><i class="ri-edit-circle-line"></i></a>
+                                    <a href="?controller=controllerCommande&page=formCommande&index=<?= $index ?>" class="text-red-500"><i class="ri-delete-bin-6-line"></i></a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p>Aucune commande n'a été faite.</p>
+                    <?php endif ?>
                 </tbody>
             </table>
         </div>
         <div class="flex justify-between">
-        <button type="submit" name="btnCmd" class="rounded-md bg-blue-400 p-1 text-white">Commander</button>
-        <div>Total: <span class="text-red-400"><?= totalAmount()?> F CFA</span></div>
+            <button type="submit" name="btnCmd" class="rounded-md bg-blue-400 p-1 text-white">Commander</button>
+            <div>Total: <span class="text-red-400"><?= totalAmount() ?> F CFA</span></div>
         </div>
     </div>
 
