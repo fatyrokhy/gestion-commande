@@ -10,7 +10,7 @@
                 <button type="submit" name="searchbtn1" class="rounded-md bg-blue-400 p-2 text-white">OK</button>
             </div>
         </form>
-        <a class="place-self-end" href="<?= PAGE ?>page=formclient">
+        <a class="place-self-end" href="<?= PAGE ?>controller=controllerCommande&page=formCommande">
             <button type="submit" name="searchbtn" class="rounded-lg bg-blue-400 text-white p-2 ">Nouveau</button>
         </a>
         <div class="flex-grow  bg-white rouded-md  ">

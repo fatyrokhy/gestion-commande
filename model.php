@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once("data.php");
 $GLOBALS['data'] =  $data;  
 
@@ -84,6 +85,7 @@ function findClientByTel($tel) {
     foreach ($datas as $value) {
         if ($value['tel']==$tel) {
             return  [$value] ;
+            break;
         }
     }
     return [];
@@ -112,6 +114,13 @@ function findCommandeClientByTel($numero) {
     
 }
 
+function isEmpty($name, &$errors)
+{
+    if (empty(trim($_POST[$name]))) {
+        $errors[$name] = ucfirst($name) . " est obligatoire";
+    }
+}
+
 function pagination($tab,$nbreElementParPage=5,$p=1){
     $nbreElementTab=count($tab);
     $nbrePage=ceil($nbreElementTab/$nbreElementParPage);
@@ -124,6 +133,59 @@ function pagination($tab,$nbreElementParPage=5,$p=1){
         'data' => array_slice($tab, $debut, $nbreElementParPage),
         'nbrePage' => $nbrePage
     ];
+}
+
+
+function ajoutCommande($article, $prix, $quantite) {
+    
+    if (!empty($article) && !empty($prix) && !empty($quantite)) {
+        if (!isset($_SESSION['commandes'])) {
+            $_SESSION['commandes'] = [];
+        }
+        $updated = false;
+        foreach ($_SESSION['commandes'] as &$cmd) {
+            if ($cmd["article"]==$article) {
+                $cmd["quantite"]=$cmd["quantite"]+$quantite;
+                break;
+            }
+        }
+        if ($cmd["article"]!=$article) {
+            $_SESSION['commandes'][] = [
+                "id" => uniqid(),
+                "article" => $article,
+                "prix" => $prix,
+                "quantite" => $quantite
+            ];
+        }
+        
+
+        
+
+    }
+}
+function totalAmount() {
+    global $total;
+    if (!isset($total)) {
+        $total = 0;
+    }
+    $total = 0; 
+    foreach ($_SESSION['commandes'] as $pro) {
+        $total += $pro["quantite"] * $pro["prix"];
+    }
+    return $total;
+}
+
+
+
+function delete($id){
+    if (!empty($_SESSION['commandes'])) {
+        foreach ($_SESSION['commandes'] as $index => $cmd ) {
+            if ($cmd['id'] == $id) {
+                unset($_SESSION['commandes'][$index]);
+                return;
+            }
+        }
+    }
 }
 
 function dd($val){
