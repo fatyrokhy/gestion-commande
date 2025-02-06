@@ -2,20 +2,53 @@
 if (isset($_REQUEST["page"])) {
     $page = $_REQUEST["page"];
     if ($page == 'formCommande') {
-        // require_once("./views/commande/formCommande.php");
-
+        global $recherche;
         if (isset($_GET["search_numero"])) {
             $recherche=findClientByTel($_GET["search_numero"]);
-            $_SESSION['client']=$recherche;
-
+            // $_SESSION['client']=$recherche;
         }
+        if (isset($_GET["searchbtn1"])) {
+            if ($recherche!=null) {
+                $_SESSION['commandes']=[];
+            }
+            
+        }
+
         if (isset($_POST["btnAdd"])) {
             $errors=[];
             isEmpty("article",$errors);
+            isEmpty("prix",$errors);
+            isEmpty("quantite",$errors);
+            if ($recherche ==null) {
+                $_SESSION['commandes']=[];
+                $errors['msge']="Veuillez sélectionner un client d'abord";
+            }
             if (!isset($_SESSION['commandes'])) {
                 $_SESSION['commandes'] = [];
             }
-            $total = ajoutCommande($_POST["article"],$_POST["prix"],$_POST["quantite"]);
+            
+            if (isset($_GET['edit'])){
+                ajoutCommande($_GET['edit'],$_POST["article"],$_POST["prix"],$_POST["quantite"]);
+            } else {
+                ajoutCommande(null,$_POST["article"],$_POST["prix"],$_POST["quantite"]);
+            } 
+            // $edit=edit($edit,$_POST["article"],$_POST["prix"],$_POST["quantite"]);
+        }
+        if (isset($_POST["btnCmd"])) {
+            isEmpty("ref",$errors);
+            commander($_POST['ref'],"impaye",$recherche[0]['id']);
+            unset($_SESSION['commandes']);
+        }
+
+        $edit = null;
+        if (isset($_GET['edit'])) {
+            $id = $_GET['edit'];
+            foreach ($_SESSION['commandes'] as $index => $cmd) {
+                if ($index == $id) {
+                    $edit = $cmd;
+                    break;
+                }
+            }
         }
 
         if (isset($_GET['index'])) {

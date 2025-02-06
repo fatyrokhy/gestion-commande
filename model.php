@@ -1,5 +1,5 @@
 <?php
-session_start();
+// session_start();
 require_once("data.php");
 $GLOBALS['data'] =  $data;  
 
@@ -117,7 +117,7 @@ function findCommandeClientByTel($numero) {
 function isEmpty($name, &$errors)
 {
     if (empty(trim($_POST[$name]))) {
-        $errors[$name] = ucfirst($name) . " est obligatoire";
+        $errors[$name] = ucfirst($name) . " obligatoire*";
     }
 }
 
@@ -136,33 +136,159 @@ function pagination($tab,$nbreElementParPage=5,$p=1){
 }
 
 
-function ajoutCommande($article, $prix, $quantite) {
+function ajoutCommande($id,$article, $prix, $quantite) {
     
     if (!empty($article) && !empty($prix) && !empty($quantite)) {
         if (!isset($_SESSION['commandes'])) {
             $_SESSION['commandes'] = [];
         }
-        $updated = false;
         foreach ($_SESSION['commandes'] as &$cmd) {
             if ($cmd["article"]==$article) {
-                $cmd["quantite"]=$cmd["quantite"]+$quantite;
+                $cmd["quantite"]+=$quantite;
                 break;
             }
         }
-        if ($cmd["article"]!=$article) {
+        $updated = false;
+        if (isset($id)) {
+            foreach ($_SESSION['commandes'] as $index =>$cmdModif) {
+                
+                if ($index == $id) { 
+                    $_SESSION['commandes'][$index]["article"] = $article;
+                    $_SESSION['commandes'][$index]["prix"] = $prix;
+                    $_SESSION['commandes'][$index]["quantite"] = $quantite;
+                    $updated = true;
+                    dd($cmdModif);
+                    break;
+
+                
+                }
+            }
+        }
+        
+        if (!$updated) {
             $_SESSION['commandes'][] = [
-                // "id" => uniqid(),
                 "article" => $article,
                 "prix" => $prix,
                 "quantite" => $quantite
             ];
         }
         
-
+        }
         
 
     }
-}
+
+    function commander($ref, $statut, $idClient) {
+        global $data; 
+        
+        $products = &$data["produits"];
+        $commandes = &$data["commandes"]; 
+        
+        foreach ($_SESSION['commandes'] as &$produit) {
+            $existe = false;
+            
+            foreach ($products as $p) {
+                if ($p["nom_produit"] == $produit["article"]) {
+                    $produit["id_produit"] = $p["id"]; 
+                    $existe = true;
+                    break;
+                }
+            }
+    
+            if (!$existe) {
+                $nouvel_id = count($products) + 1;
+                $produit["id_produit"] = $nouvel_id;
+                
+                $products[] = [
+                    "id" => $nouvel_id,
+                    "nom_produit" => $produit["article"],
+                    "ref" => "abhg6",
+                    "prix" => $produit["prix"]
+                ];
+            }
+        }
+    
+       
+        $nouvelle_commande = [
+            "id" => count($commandes) + 1,
+            "date" => date("d-m-Y"),
+            "numero_commande" => $ref,
+            "statut" => $statut,
+            "montant_paye" => 0,
+            "id_client" => $idClient,
+            "details" => array_map(fn($p) => ["id_produit" => $p["id_produit"], "quantite" => $p["quantite"]], $_SESSION['commandes'])
+        ];
+    
+    
+        $commandes[] = $nouvelle_commande;
+        sauvegarderData($data);
+
+
+        
+        dd($commandes);
+    }
+    function sauvegarderData($data) {
+        $contenu = "<?php\n\$data = " . var_export($data, true) . ";\n?>";
+        file_put_contents('data.php', $contenu);
+    }
+
+    function commander2($ref,$statut,$idClient){
+        //$products=findALLClient('produits');
+        //$com=findALLClient('commandes');
+        global $data; // Utilisation de la variable globale $data
+    
+        $products = &$data["produits"]; // Référence directe aux produits dans $data
+        $com = &$data["commandes"];
+        foreach ($_SESSION['commandes'] as  &$produit) {
+            $existe = false;
+           
+            
+            // Vérifier si le produit est déjà enregistré
+            foreach ($products as $p) {
+                if ($p["nom_produit"] == $produit["article"]) {
+                    $produit["id_produit"] = $p["id"]; // Récupérer l'ID existant
+                    $existe = true;
+                    break;
+                }
+            }
+
+        
+        
+            // Si le produit n'existe pas, on le crée
+            if (!$existe) {
+                
+                $nouvel_id = count($products) + 1;
+                $produit["id_produit"] = $nouvel_id;
+                //dd($produit);
+                dd($GLOBALS['data']['produits']);
+                $products[]  = [
+                    "id" => $nouvel_id,
+                    "nom_produit" => $produit["article"],
+                    "ref" => "abhg6",
+                    "prix" => $produit["prix"]
+                ];
+            }
+        }
+        
+
+        $nouvelle_commande = [
+            "id" => count($com) + 1,
+            "date" => date("d-m-Y"),
+            "numero_commande" => $ref,
+            "statut" => $statut,
+            "montant_paye" => 0,
+            "id_client" => $idClient,
+            "details" => array_map(fn($p) => ["id_produit" => $p["id_produit"], "quantite" => $p["quantite"]], $_SESSION['commandes'])
+        ];
+        
+        // Ajouter la commande
+        $com[] = $nouvelle_commande;
+        
+    }
+
+    function edit($id,$article,$prix,$quantite){
+        
+    }
 function totalAmount() {
     global $total;
     if (!isset($total)) {
@@ -187,6 +313,8 @@ function delete($id){
         }
     }
 }
+
+
 
 function dd($val){
     echo "<pre>";
