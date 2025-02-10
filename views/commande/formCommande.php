@@ -4,7 +4,7 @@
 <div class="grid grid-cols-1 gap-8 text-gray-700 bg-white rounded-md w-[70%] p-2  mx-auto mt-12">
     <div class="shadow w-[50%] border border-gray-400 rounded-md  gap-8 p-2 place-self-start">
         <form action="" method="get" class="w-full ">
-            <input type="text" name="search_numero" class="rounded-md border-2 border-slate-100 w-[50%] h-8" placeholder="Entrez le numero de téléphone">
+            <input type="text" name="search_numero" value="<?= $_SESSION['client'][0]['tel']??''?>" class="rounded-md border-2 border-slate-100 w-[50%] h-8" placeholder="Entrez le numero de téléphone">
             <input type="hidden" name="controller" value="controllerCommande">
             <input type="hidden" name="page" value="formCommande">
             <button type="submit" name="searchbtn1" class="rounded-md bg-blue-400 p-1 text-white">OK</button>
@@ -90,8 +90,8 @@
                                     <td><?= htmlspecialchars($commande['quantite']) ?></td>
                                     <td><?= htmlspecialchars($commande['quantite']) * htmlspecialchars($commande['prix']) ?></td>
                                     <td class="   gap-4">
-                                        <a href="?controller=controllerCommande&page=formCommande&edit=<?= $index ?>" class="text-blue-500"><i class="ri-edit-circle-line"></i></a>
-                                        <a href="?controller=controllerCommande&page=formCommande&index=<?= $index ?>" class="text-red-500"><i class="ri-delete-bin-6-line"></i></a>
+                                        <a href="?controller=controllerCommande&page=formCommande&edit=<?= $index ?>&search_numero=<?= $_SESSION['client'][0]['tel']?>" class="text-blue-500"><i class="ri-edit-circle-line"></i></a>
+                                        <a href="?controller=controllerCommande&page=formCommande&index=<?= $index ?>&search_numero=<?= $_SESSION['client'][0]['tel']?>" class="text-red-500"><i class="ri-delete-bin-6-line"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

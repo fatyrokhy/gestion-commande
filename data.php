@@ -212,6 +212,23 @@ $data = array (
         ),
       ),
     ),
+    6 => 
+    array (
+      'id' => 7,
+      'date' => '10-02-2025',
+      'numero_commande' => 'RTGF6',
+      'statut' => 'impaye',
+      'montant_paye' => 0,
+      'id_client' => 2,
+      'details' => 
+      array (
+        0 => 
+        array (
+          'id_produit' => 7,
+          'quantite' => '5',
+        ),
+      ),
+    ),
   ),
 );
 ?>
