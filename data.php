@@ -68,6 +68,20 @@ $data = array (
       'ref' => 'abhg6',
       'prix' => '300',
     ),
+    5 => 
+    array (
+      'id' => 6,
+      'nom_produit' => 'huile',
+      'ref' => 'abhg6',
+      'prix' => '300',
+    ),
+    6 => 
+    array (
+      'id' => 7,
+      'nom_produit' => 'pain',
+      'ref' => 'abhg6',
+      'prix' => '150',
+    ),
   ),
   'commandes' => 
   array (
@@ -161,6 +175,40 @@ $data = array (
         array (
           'id_produit' => 1,
           'quantite' => '4',
+        ),
+      ),
+    ),
+    4 => 
+    array (
+      'id' => 5,
+      'date' => '10-02-2025',
+      'numero_commande' => 'rtgf9',
+      'statut' => 'impaye',
+      'montant_paye' => 0,
+      'id_client' => 3,
+      'details' => 
+      array (
+        0 => 
+        array (
+          'id_produit' => 6,
+          'quantite' => '2',
+        ),
+      ),
+    ),
+    5 => 
+    array (
+      'id' => 6,
+      'date' => '10-02-2025',
+      'numero_commande' => 'RTGF7',
+      'statut' => 'impaye',
+      'montant_paye' => 0,
+      'id_client' => 3,
+      'details' => 
+      array (
+        0 => 
+        array (
+          'id_produit' => 7,
+          'quantite' => '3',
         ),
       ),
     ),
